@@ -101,8 +101,6 @@ const startCliTool = async () => {
         return;
       }
 
-      console.log({ selectedProject });
-
       const scripts = extractScriptsFromPackage(selectedProject);
 
       if (!Object.keys(scripts).length) {

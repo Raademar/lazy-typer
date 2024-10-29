@@ -5,9 +5,6 @@ export const runScript = (
   folder: string,
   packageManager: string
 ) => {
-  console.log({ scriptName });
-  console.log({ folder });
-  console.log({ packageManager });
   const child = spawn(packageManager, ["run", scriptName], {
     cwd: folder,
     stdio: "inherit",
