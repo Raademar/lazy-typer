@@ -4,12 +4,13 @@ import { input, select } from "@inquirer/prompts";
 import { Config } from "./types";
 
 const getConfigFilePath = () => {
-  const packagePath = path.dirname(require.resolve("lazy-typer/package.json"));
+  const packagePath = path.resolve(__dirname);
   return path.join(packagePath, ".lazy-typer-config.json");
 };
 
 export const loadConfig = (): Config | null => {
   const configFilePath = getConfigFilePath();
+
   if (fs.existsSync(configFilePath)) {
     const configContent = fs.readFileSync(configFilePath, "utf-8");
     const config = JSON.parse(configContent) as Config;
