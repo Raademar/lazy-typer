@@ -3,14 +3,13 @@ import * as path from "path";
 import { input, select } from "@inquirer/prompts";
 import { Config } from "./types";
 
-// TODO:
-// Add config for project manager tools (npm, yarn, pnpm, custom)
-// Custom option shows free text field with explanation
-// nx run @halon/{project}:{script} regex will replace project and script with real values
-
-const configFilePath = path.join(process.cwd(), ".lazy-typer-config.json");
+const getConfigFilePath = () => {
+  const packagePath = path.dirname(require.resolve("lazy-typer/package.json"));
+  return path.join(packagePath, ".lazy-typer-config.json");
+};
 
 export const loadConfig = (): Config | null => {
+  const configFilePath = getConfigFilePath();
   if (fs.existsSync(configFilePath)) {
     const configContent = fs.readFileSync(configFilePath, "utf-8");
     const config = JSON.parse(configContent) as Config;
@@ -25,16 +24,27 @@ export const saveConfig = (
   customCommand?: string,
   customPackageManger?: string
 ) => {
+  const configFilePath = getConfigFilePath();
+
   const config = {
     folders,
     packageManager,
     customCommand,
     customPackageManger,
   };
+
+  const configDir = path.dirname(configFilePath);
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true });
+  }
+
   fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), "utf-8");
+  console.log(`Configuration saved`);
 };
 
 export const clearConfig = () => {
+  const configFilePath = getConfigFilePath();
+
   if (fs.existsSync(configFilePath)) {
     fs.unlinkSync(configFilePath);
     console.log("Configuration has been cleared.");
