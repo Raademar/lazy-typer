@@ -18,14 +18,18 @@ import {
 
 const args = process.argv.slice(2);
 const shouldClearConfig = args.includes("--clear");
+const shouldClearAllConfigs = args.includes("--clear-all");
 
 const startCliTool = async () => {
   try {
-    if (shouldClearConfig) {
-      clearConfig();
-      return;
-    }
     const configKey = process.cwd();
+    if (shouldClearConfig) {
+      clearConfig(configKey);
+    }
+
+    if (shouldClearAllConfigs) {
+      clearConfig();
+    }
     console.log({ configKey });
 
     let config = loadConfig(configKey);

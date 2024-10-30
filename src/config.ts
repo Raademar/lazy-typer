@@ -100,14 +100,36 @@ export const saveConfig = (
   console.log(`Configuration saved`);
 };
 
-export const clearConfig = () => {
+export const clearConfig = (configKey?: string) => {
   const configFilePath = getConfigFilePath();
 
-  if (fs.existsSync(configFilePath)) {
-    fs.unlinkSync(configFilePath);
-    console.log("Configuration has been cleared.");
+  if (configKey) {
+    const currentConfig = loadFullConfig();
+
+    if (currentConfig && configKey in currentConfig) {
+      delete currentConfig[configKey];
+
+      if (Object.keys(currentConfig).length === 0) {
+        fs.unlinkSync(configFilePath);
+        console.log("Configuration file was empty and has been deleted.");
+      } else {
+        fs.writeFileSync(
+          configFilePath,
+          JSON.stringify(currentConfig, null, 2),
+          "utf-8"
+        );
+        console.log(`Configuration for ${configKey} has been removed.`);
+      }
+    } else {
+      console.log(`No configuration found for the key: ${configKey}`);
+    }
   } else {
-    console.log("No configuration file found to clear.");
+    if (fs.existsSync(configFilePath)) {
+      fs.unlinkSync(configFilePath);
+      console.log("Configuration has been cleared.");
+    } else {
+      console.log("No configuration file found to clear.");
+    }
   }
 };
 
