@@ -6,7 +6,7 @@
     "lz": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "start": "node dist/index.js"
   },
   "keywords": [

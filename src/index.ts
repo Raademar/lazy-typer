@@ -133,7 +133,11 @@ const startCliTool = async () => {
             .replace("{script}", selectedScript)}`;
           runCustomCommand(command, cwd);
         } else {
-          runScript(selectedScript, cwd, packageManager);
+          runScript(
+            selectedScript,
+            path.dirname(selectedProject),
+            packageManager
+          );
         }
         continueSelection = false;
       }
