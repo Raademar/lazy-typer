@@ -1,6 +1,6 @@
 # Lazy-Typer
 
-**lazy-typer** (bin command: `lz`) is a CLI tool designed to simplify the process of navigating and running scripts in a monorepo or multi-project workspace. It allows you to scan project folders, navigate to the desired project, and run `package.json` scripts with ease. Additionally, it supports custom package manager commands.
+**lazy-typer** is a CLI tool designed to simplify the process of navigating and running scripts in a monorepo or multi-project workspace. It allows you to scan project folders, navigate to the desired project, and run `package.json` scripts with ease. Additionally, it supports custom package manager commands.
 
 ## Features
 
