@@ -30,7 +30,6 @@ const startCliTool = async () => {
     if (shouldClearAllConfigs) {
       clearConfig();
     }
-    console.log({ configKey });
 
     let config = loadConfig(configKey);
 
