@@ -1,11 +1,35 @@
-import * as fs from "fs";
-import * as path from "path";
+import fs from "fs";
+import path from "path";
+import os from 'os';
 import { input, select } from "@inquirer/prompts";
 import { Config } from "./types";
 
+const getConfigDirectory = () => {
+  const platform = os.platform();
+  let configDir;
+
+  if (platform === 'win32') {
+    // On Windows, use AppData\Local
+    configDir = path.join(process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Local'), 'lazy-typer');
+  } else if (platform === 'darwin' || platform === 'linux') {
+    // On macOS or Linux, follow the XDG Base Directory Specification
+    configDir = path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'), 'lazy-typer');
+  } else {
+    // Fallback to the user's home directory (not ideal, but a fallback)
+    configDir = path.join(os.homedir(), '.lazy-typer');
+  }
+
+  return configDir;
+};
+
 const getConfigFilePath = () => {
-  const packagePath = path.resolve(__dirname);
-  return path.join(packagePath, ".lazy-typer-config.json");
+  const configDir = getConfigDirectory();
+  const configFile = path.join(configDir, 'config.json');
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true });
+  }
+
+  return configFile;
 };
 
 export const loadConfig = (): Config | null => {
