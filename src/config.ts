@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import os from 'os';
+import os from "os";
 import { input, select } from "@inquirer/prompts";
 import { Config } from "./types";
 
@@ -8,15 +8,21 @@ const getConfigDirectory = () => {
   const platform = os.platform();
   let configDir;
 
-  if (platform === 'win32') {
+  if (platform === "win32") {
     // On Windows, use AppData\Local
-    configDir = path.join(process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Local'), 'lazy-typer');
-  } else if (platform === 'darwin' || platform === 'linux') {
+    configDir = path.join(
+      process.env.APPDATA || path.join(os.homedir(), "AppData", "Local"),
+      "lazy-typer"
+    );
+  } else if (platform === "darwin" || platform === "linux") {
     // On macOS or Linux, follow the XDG Base Directory Specification
-    configDir = path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'), 'lazy-typer');
+    configDir = path.join(
+      process.env.XDG_CONFIG_HOME || path.join(os.homedir(), ".config"),
+      "lazy-typer"
+    );
   } else {
     // Fallback to the user's home directory (not ideal, but a fallback)
-    configDir = path.join(os.homedir(), '.lazy-typer');
+    configDir = path.join(os.homedir(), ".lazy-typer");
   }
 
   return configDir;
@@ -24,7 +30,7 @@ const getConfigDirectory = () => {
 
 const getConfigFilePath = () => {
   const configDir = getConfigDirectory();
-  const configFile = path.join(configDir, 'config.json');
+  const configFile = path.join(configDir, "config.json");
   if (!fs.existsSync(configDir)) {
     fs.mkdirSync(configDir, { recursive: true });
   }
@@ -32,49 +38,98 @@ const getConfigFilePath = () => {
   return configFile;
 };
 
-export const loadConfig = (): Config | null => {
+export const loadConfig = (key: string): Config | null => {
   const configFilePath = getConfigFilePath();
 
   if (fs.existsSync(configFilePath)) {
     const configContent = fs.readFileSync(configFilePath, "utf-8");
-    const config = JSON.parse(configContent) as Config;
+    const configs = JSON.parse(configContent) as Record<string, Config>;
+    const config = configs[key] ?? null;
     return config;
   }
   return null;
 };
 
+const loadFullConfig = (): Record<string, Config> | null => {
+  const configFilePath = getConfigFilePath();
+
+  if (fs.existsSync(configFilePath)) {
+    const configContent = fs.readFileSync(configFilePath, "utf-8");
+    const configs = JSON.parse(configContent) as Record<string, Config>;
+    return configs;
+  }
+  return null;
+};
+
 export const saveConfig = (
+  key: string,
   folders: string[],
   packageManager: string,
   customCommand?: string,
   customPackageManger?: string
 ) => {
   const configFilePath = getConfigFilePath();
+  const currentConfigs = loadFullConfig();
 
-  const config = {
+  const newConfig = {
     folders,
     packageManager,
     customCommand,
     customPackageManger,
   };
 
+  let configToSave = {};
+
+  if (currentConfigs) {
+    currentConfigs[key] = newConfig;
+    configToSave = currentConfigs;
+  } else {
+    configToSave = { [key]: newConfig };
+  }
+
   const configDir = path.dirname(configFilePath);
   if (!fs.existsSync(configDir)) {
     fs.mkdirSync(configDir, { recursive: true });
   }
 
-  fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), "utf-8");
+  fs.writeFileSync(
+    configFilePath,
+    JSON.stringify(configToSave, null, 2),
+    "utf-8"
+  );
   console.log(`Configuration saved`);
 };
 
-export const clearConfig = () => {
+export const clearConfig = (configKey?: string) => {
   const configFilePath = getConfigFilePath();
 
-  if (fs.existsSync(configFilePath)) {
-    fs.unlinkSync(configFilePath);
-    console.log("Configuration has been cleared.");
+  if (configKey) {
+    const currentConfig = loadFullConfig();
+
+    if (currentConfig && configKey in currentConfig) {
+      delete currentConfig[configKey];
+
+      if (Object.keys(currentConfig).length === 0) {
+        fs.unlinkSync(configFilePath);
+        console.log("Configuration file was empty and has been deleted.");
+      } else {
+        fs.writeFileSync(
+          configFilePath,
+          JSON.stringify(currentConfig, null, 2),
+          "utf-8"
+        );
+        console.log(`Configuration for ${configKey} has been removed.`);
+      }
+    } else {
+      console.log(`No configuration found for the key: ${configKey}`);
+    }
   } else {
-    console.log("No configuration file found to clear.");
+    if (fs.existsSync(configFilePath)) {
+      fs.unlinkSync(configFilePath);
+      console.log("Configuration has been cleared.");
+    } else {
+      console.log("No configuration file found to clear.");
+    }
   }
 };
 
