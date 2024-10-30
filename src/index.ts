@@ -7,7 +7,7 @@ import {
   scanFoldersForPackages,
   promptProjectSelection,
   promptScriptSelection,
-} from "./utils";
+} from "./functions";
 import {
   loadConfig,
   promptFoldersToScan,
