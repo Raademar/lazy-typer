@@ -66,7 +66,7 @@ export const saveConfig = (
   folders: string[],
   packageManager: string,
   customCommand?: string,
-  customPackageManger?: string
+  customPackageManager?: string
 ) => {
   const configFilePath = getConfigFilePath();
   const currentConfigs = loadFullConfig();
@@ -75,7 +75,7 @@ export const saveConfig = (
     folders,
     packageManager,
     customCommand,
-    customPackageManger,
+    customPackageManager,
   };
 
   let configToSave = {};

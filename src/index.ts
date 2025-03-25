@@ -98,7 +98,6 @@ const startCliTool = async () => {
                 .dirname(selectedProject)
                 .split(/\\|\//);
               const project = projectPathParts[projectPathParts.length - 1];
-
               const command = `${customPackageManager} ${customCommand
                 .replace("{project}", project)
                 .replace("{script}", selectedScript)}`;
