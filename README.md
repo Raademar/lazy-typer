@@ -20,15 +20,15 @@ npm install -g lazy-typer
 
 ## Usage
 
-After installation, you can run the tool using the `lz` command:
+After installation, you can run the tool using the `lzt` command:
 
 ```bash
-lz
+lzt
 ```
 
 ## First-Time Configuration
 
-When you first run `lz`, you will be asked to configure the tool:
+When you first run `lzt`, you will be asked to configure the tool:
 
 1. **Select Folders**: Specify which folders to scan (e.g., apps, libs). Use a dot (.) to indicate the current directory.
 
@@ -40,7 +40,7 @@ When you first run `lz`, you will be asked to configure the tool:
 
 ## Running Commands
 
-Once configured, you can run `lz` to:
+Once configured, you can run `lzt` to:
 
 1. **Select a project**: Choose a project from the scanned folders.
 
@@ -53,13 +53,13 @@ Once configured, you can run `lz` to:
 To clear the existing configuration, use the `--clear` flag:
 
 ```bash
-lz --clear
+lzt --clear
 ```
 
 This will reset the saved folder paths and package manager settings, and prompt you to configure the tool again.
 
 ```bash
-lz
+lzt
 # Output
 # 1. Select the project folder:
 #    - backend
@@ -78,7 +78,7 @@ Custom Package Manager: nx
 Command Format: run @company/{project}:{script}
 ```
 
-Then, when you run `lz`, it will dynamically replace `{project}` and `{script}` and execute commands like:
+Then, when you run `lzt`, it will dynamically replace `{project}` and `{script}` and execute commands like:
 
 ```bash
 nx run @company/backend:build
